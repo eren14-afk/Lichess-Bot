@@ -75,6 +75,32 @@ Position::init();    // Zobrist keys
 - **Perft**: `bin\engine.exe perft` runs the standard 6-position suite and checks
   node counts against known-correct values.
 
+## Deploy as a Lichess bot (GitHub Actions)
+
+The engine can run as a Lichess bot straight from GitHub Actions — no server
+needed. The workflow at
+[`.github/workflows/lichess-bot.yml`](.github/workflows/lichess-bot.yml) builds
+the engine, installs the
+[`lichess-bot`](https://github.com/lichess-bot-devs/lichess-bot) bridge, and
+plays continuously.
+
+1. **Make the repository public.** Public repos get free standard-runner
+   minutes, which the always-on workflow relies on.
+2. **Create a Lichess BOT token** with the `bot:play` scope at
+   [lichess.org/account/oauth/token](https://lichess.org/account/oauth/token/create)
+   (register the account as a bot first).
+3. **Add it as a secret:** in the repo, **Settings → Secrets and variables →
+   Actions → New repository secret** → name it `LICHESS_BOT_TOKEN`.
+4. **Start the bot:** open the **Actions** tab → **lichess-bot** → **Run
+   workflow**. The first run compiles the engine and downloads the NNUE net
+   (~2–4 min), then begins playing.
+
+The workflow keeps the bot online continuously: each job runs up to ~5h50m (under
+GitHub's 6h cap) and a scheduled run every 5h queues behind it, taking over as the
+previous job ends. Brief gaps are harmless — an idle Lichess bot loses no rating.
+Engine tuning (threads, hash, time management, book) lives in
+[`deploy/config.yml`](deploy/config.yml).
+
 ## Roadmap
 
 | Phase | Scope |
