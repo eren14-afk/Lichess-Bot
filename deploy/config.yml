@@ -13,9 +13,9 @@ engine:
   ponder: true                         # think on the opponent's clock — a real bullet-rating win
 
   uci_options:
-    Threads: 3                         # runner has ~4 vCPU; 3 for the engine, 1 for bridge/OS
-    Hash: 256                          # MB
-    Move Overhead: 150                 # ms; lowered from 400 — 0 flag losses gave margin to spend on depth (converts draws->wins). Override per-deploy with the MOVE_OVERHEAD env var.
+    Threads: 4                         # runner has ~4 vCPU; 3 for the engine, 1 for bridge/OS
+    Hash: 512                          # MB
+    Move Overhead: 200                 # ms; lowered from 400 — 0 flag losses gave margin to spend on depth (converts draws->wins). Override per-deploy with the MOVE_OVERHEAD env var.
     Use NNUE: true                     # NNUE net is embedded in the binary (nn-ad9b42354671.nnue)
     OwnBook: true                      # Wizard plays Polyglot book moves in the opening (our integration)
     BookFile: "book/komodo.bin"        # relative to working_dir (downloaded by the Dockerfile)
@@ -23,7 +23,7 @@ engine:
 
 # --- Seek games actively (drives the rating climb) ---
 matchmaking:
-  allow_matchmaking: true
+  allow_matchmaking: false
   challenge_variant: "standard"
   challenge_timecontrol: "bullet"      # bullet: engines overperform most (opponents flag/blunder)
   challenge_initial_time: 60           # 1+1 bullet
@@ -44,13 +44,12 @@ challenge:
   only_bot: false
   max_increment: 10
   min_increment: 0
-  max_base: 300                        # up to 5 min base
-  min_base: 60                         # >= 1 min base so we accept bullet challenges too
+  max_base: 60                        # up to 5 min base
+  min_base: 0                         # >= 1 min base so we accept bullet challenges too
   variants:
     - standard
   time_controls:
     - bullet
-    - blitz
   modes:
     - rated
 
